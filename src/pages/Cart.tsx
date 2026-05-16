@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCartStore } from '@/src/store/cartStore';
@@ -7,7 +7,20 @@ import { useToastStore } from '@/src/store/toastStore';
 
 export default function Cart() {
   const { items, updateQuantity, removeItem } = useCartStore();
+  const navigate = useNavigate();
   const showToast = useToastStore((state) => state.showToast);
+
+  // State quản lý trạng thái đăng nhập thực tế của trang giỏ hàng
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []); // Chạy ngay khi vào trang Giỏ hàng
 
   // State cho mã giảm giá
   const [couponCode, setCouponCode] = useState('');
@@ -41,6 +54,18 @@ export default function Cart() {
       setAppliedCode('');
       setCouponError('Mã giảm giá không chính xác hoặc đã hết hạn');
     }
+  };
+
+  const handleCheckout = () => {
+    // Đọc trực tiếp lại một lần nữa để đảm bảo tính chính xác tuyệt đối lúc bấm nút
+    const savedUser = localStorage.getItem('currentUser');
+    
+    if (!savedUser) {
+      alert("Vui lòng đăng nhập để tiến hành thanh toán!");
+      navigate('/login');
+      return;
+    }
+    navigate('/checkout');
   };
 
   if (items.length === 0) {
@@ -219,9 +244,13 @@ export default function Cart() {
                 </div>
 
                 <div className="space-y-4">
-                   <Link to="/checkout" className="w-full bg-[#9c4533] text-white py-5 font-bold uppercase tracking-[0.2em] hover:bg-black transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#9c4533]/20">
-                      Thanh toán ngay <ArrowRight size={18} />
-                   </Link>
+                   <button 
+                    onClick={handleCheckout}
+                    className="w-full bg-[#9c4533] text-white py-5 font-bold uppercase tracking-[0.2em] hover:bg-black transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#9c4533]/20"
+                   >
+                      Thanh toán ngay 
+                      <ArrowRight size={18} />
+                   </button>
                    <p className="text-[11px] text-gray-400 text-center leading-relaxed px-4">
                       Thuế VAT (nếu có) được tính tại trang thanh toán. Đơn hàng của bạn sẽ được xử lý trong vòng 24h.
                    </p>

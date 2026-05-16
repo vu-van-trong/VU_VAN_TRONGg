@@ -9,7 +9,9 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import LandingPage from './pages/LandingPage';
+import Lookbook from './pages/Lookbook'; // ⭐ THÊM MỚI: Import trang Lookbook
 import SalePage from './pages/SalePage'; // ⭐ THÊM MỚI: Import trang Săn Deal
+import ThankYou from './pages/ThankYou';
 import Toast from './components/Toast';
 
 export default function App() {
@@ -32,6 +34,9 @@ export default function App() {
             {/* 🔥 Trang Săn Deal (Vừa được thêm mới) */}
             <Route path="/san-deal" element={<SalePage />} />
             
+            {/* 📸 Trang Lookbook - Không gian cảm hứng (Thêm mới) */}
+            <Route path="/lookbook" element={<Lookbook />} />
+            
             {/* 📦 Hệ thống Sản phẩm & Danh mục */}
             <Route path="/collections/all" element={<Collection />} />
             <Route path="/collections" element={<Collection />} />
@@ -40,6 +45,7 @@ export default function App() {
             {/* 🛒 Giỏ hàng */}
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             
             {/* 📰 Hệ thống Tin tức (Blog) */}
             <Route path="/blogs/news" element={<Blog />} />

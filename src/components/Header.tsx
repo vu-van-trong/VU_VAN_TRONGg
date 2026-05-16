@@ -9,33 +9,36 @@ const MENU_ITEMS = [
   {
     title: "Trang chủ",
     path: "/",
-    submenu: [
-      { title: "Trang chủ 1 sản phẩm", path: "/home-1" },
-      { title: "Trang chủ có slider", path: "/home-slider" },
-      { title: "Trang chủ không slider", path: "/home-no-slider" },
-    ],
   },
   {
     title: "SĂN DEAL",
     path: "/san-deal",
     submenu: [
-      { title: "Kiểu hiển thị header 1", path: "/header-1" },
-      { title: "Kiểu hiển thị header 2", path: "/header-2" },
-      { title: "Kiểu hiển thị header 3", path: "/header-3" },
+      { title: "Trạm 1: Vòng quay may mắn", path: "/san-deal", anchor: "tram-1" },
+      { title: "Trạm 2: Combo Decor", path: "/san-deal", anchor: "tram-2" },
+      { title: "Trạm 3: Hot Sale", path: "/san-deal", anchor: "tram-3" },
     ],
   },
   {
     title: "Sản phẩm",
     path: "/collections/all",
     submenu: [
-      { title: "Sản phẩm nổi bật", path: "/collections/featured" },
-      { title: "Sản phẩm khuyến mãi", path: "/collections/sale" },
-      { title: "Sản phẩm mới", path: "/collections/new" },
+      { title: "Phòng khách hiện đại", path: "/collections/all?room=living" },
+      { title: "Phòng ngủ ấm cúng", path: "/collections/all?room=bedroom" },
+      { title: "Góc làm việc tối giản", path: "/collections/all?room=working" },
     ],
+  },
+  {
+    title: "LOOKBOOK",
+    path: "/lookbook",
   },
   {
     title: "Blog",
     path: "/blogs/news",
+    submenu: [
+      { title: "Xu hướng thiết kế", path: "/blogs/news?category=design" },
+      { title: "Mẹo bảo quản nội thất", path: "/blogs/news?category=tips" },
+    ],
   },
   {
     title: "Landing Page",
@@ -148,6 +151,24 @@ export default function Header() {
     localStorage.removeItem('currentUser');
     setCurrentUser(null);
     showToast('Đã đăng xuất');
+  };
+
+  // Logic cuộn mượt cho các trạm Săn Deal
+  const handleSubmenuClick = (e: React.MouseEvent, sub: any) => {
+    if (sub.anchor) {
+      if (location.pathname === '/san-deal') {
+        e.preventDefault();
+        const element = document.getElementById(sub.anchor);
+        if (element) {
+          const headerOffset = 100;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+      } else {
+        navigate(`${sub.path}#${sub.anchor}`);
+      }
+    }
   };
 
   // Custom Styles for Modal (Plain CSS/Inline to avoid Tailwind reliance as requested)
@@ -339,29 +360,39 @@ export default function Header() {
         <nav className="hidden md:block border-t border-gray-50 bg-white">
           <ul className="flex justify-center items-center uppercase font-bold text-[13px] tracking-widest">
             {MENU_ITEMS.map((item) => (
-              <li key={item.title} className="relative group px-6 py-4">
-                <Link 
-                  to={item.path} 
-                  className={cn(
-                    "flex items-center gap-1.5 transition-colors duration-300",
-                    location.pathname === item.path ? "text-[#9c4533]" : "hover:text-[#9c4533]",
-                    item.title === "SĂN DEAL" && "text-[#B05B43] font-bold"
-                  )}
-                >
-                  {item.title}
-                  {item.submenu && <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />}
-                </Link>
+              <li key={item.title} className="relative group">
+                {/* Khối bọc menu chính - Giữ khoảng cách hover rộng rãi */}
+                <div className="px-6 py-4">
+                  <Link 
+                    to={item.path} 
+                    className={cn(
+                      "flex items-center gap-1.5 transition-colors duration-300",
+                      location.pathname === item.path ? "text-[#B05B43] font-bold" : "text-gray-800 hover:text-[#B05B43]"
+                    )}
+                  >
+                    {item.title}
+                    {item.submenu && <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />}
+                  </Link>
+                </div>
+
                 {item.submenu && (
-                  <ul className="absolute top-full left-0 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] min-w-[240px] py-4 z-[100] border-t-2 border-[#9c4533] opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 font-medium normal-case text-gray-600">
-                    {item.submenu.map((sub) => (
-                      <li key={sub.title}>
-                        <Link to={sub.path} className="flex items-center justify-between px-6 py-2.5 hover:bg-gray-50 hover:text-[#9c4533] transition-all">
-                          {sub.title}
-                          <ChevronRight size={12} className="opacity-0 group-hover:opacity-100" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  /* Khối container tuyệt đối - Dùng chung cho cả SẢN PHẨM và BLOG */
+                  <div className="absolute top-full left-0 hidden group-hover:block pt-3 z-[100] min-w-[240px]">
+                    <ul className="bg-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] py-4 border-t-2 border-[#B05B43] animate-in fade-in slide-in-from-top-2 duration-200 font-medium normal-case text-gray-600 before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-[20px] before:block">
+                      {item.submenu.map((sub) => (
+                        <li key={sub.title}>
+                          <Link 
+                            to={sub.path} 
+                            onClick={(e) => handleSubmenuClick(e, sub)}
+                            className="flex items-center justify-between px-6 py-2.5 hover:bg-gray-50 hover:text-[#B05B43] transition-all"
+                          >
+                            {sub.title}
+                            <ChevronRight size={12} className="opacity-0 group-hover:opacity-100" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </li>
             ))}
@@ -498,8 +529,10 @@ export default function Header() {
                     <Link 
                       to={item.path} 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-between p-4 font-bold uppercase text-[14px] hover:bg-gray-50 rounded-lg text-gray-800"
-                      className={cn("flex items-center justify-between p-4 font-bold uppercase text-[14px] hover:bg-gray-50 rounded-lg text-gray-800", item.title === "SĂN DEAL" && "text-[#B05B43]")}
+                      className={cn(
+                        "flex items-center justify-between p-4 font-bold uppercase text-[14px] hover:bg-gray-50 rounded-lg",
+                        location.pathname === item.path ? "text-[#B05B43] font-bold" : "text-gray-800"
+                      )}
                     >
                       {item.title}
                       {item.submenu && <ChevronRight size={18} className="text-gray-400" />}

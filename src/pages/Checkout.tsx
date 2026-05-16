@@ -2,12 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useCartStore } from '@/src/store/cartStore';
-import { useToastStore } from '@/src/store/toastStore';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, clearCart } = useCartStore();
-  const showToast = useToastStore((state) => state.showToast);
 
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
@@ -21,14 +19,28 @@ export default function Checkout() {
 
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!items.length) return;
-    if (!customerName.trim() || !phone.trim() || !address.trim()) {
-      showToast('Vui lòng nhập đầy đủ thông tin');
+
+    // ĐỒNG BỘ LOGIC KIỂM TRA ĐĂNG NHẬP: Khớp 100% với Header (Key 'currentUser')
+    const savedUser = localStorage.getItem('currentUser');
+    if (!savedUser) {
+      alert("Vui lòng đăng nhập để tiếp tục đặt hàng!");
+      navigate('/login');
       return;
     }
+
+    if (items.length === 0) {
+      return;
+    }
+
+    if (!customerName.trim() || !phone.trim() || !address.trim()) {
+      alert('Vui lòng điền đầy đủ các thông tin bắt buộc: Họ tên, Số điện thoại và Địa chỉ nhận hàng!');
+      return;
+    }
+
+    // HOÀN TẤT ĐẶT HÀNG: Xóa sạch dữ liệu giỏ hàng và chuyển hướng bắt buộc sang trang Cảm ơn
+    localStorage.removeItem('cart');
     clearCart();
-    showToast('Đặt hàng thành công');
-    navigate('/', { replace: true });
+    navigate('/thank-you', { replace: true });
   };
 
   if (!items.length) {

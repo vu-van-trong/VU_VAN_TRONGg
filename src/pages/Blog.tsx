@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronRight, Calendar, User } from 'lucide-react';
 
 const blogPosts = [
@@ -14,7 +14,7 @@ const blogPosts = [
     author: 'modern furniture',
     date: '04.07.2021',
     excerpt: 'Hiện nay, nhu cầu chọn mua bàn ghế sofa đã dần trở nên phổ biến và được ưa chuộng nhiều hơn. Tuy nhiên, không phải ai cũng biết cách chọn được một bộ sofa chất lượng...',
-    category: 'Tin tức'
+    category: 'tips'
   },
   {
     id: 'bai-viet-mau-3',
@@ -23,7 +23,7 @@ const blogPosts = [
     author: 'Duyên Nguyễn',
     date: '20.08.2018',
     excerpt: 'Đây là trang blog của cửa hàng. Bạn có thể dùng blog để quảng bá sản phẩm mới, chia sẻ trải nghiệm của khách hàng, hoặc cung cấp các mẹo nhỏ về nội thất...',
-    category: 'Tin tức'
+    category: 'news'
   },
   {
     id: 'bai-viet-mau-2',
@@ -32,7 +32,7 @@ const blogPosts = [
     author: 'Duyên Nguyễn',
     date: '20.08.2018',
     excerpt: 'Chia sẻ các xu hướng thiết kế nội thất mới nhất năm nay. Tìm hiểu cách tối ưu không gian sống với những món đồ nội thất thông minh và phong cách...',
-    category: 'Tin tức'
+    category: 'design'
   },
   {
     id: '1-bai-viet-mau',
@@ -41,7 +41,7 @@ const blogPosts = [
     author: 'modern furniture',
     date: '20.08.2018',
     excerpt: 'Kinh nghiệm trang trí phòng khách đẹp mắt và ấm cúng. Làm thế nào để phối hợp màu sắc sơn tường với màu gỗ của bàn ghế để tạo nên một không gian hoàn hảo...',
-    category: 'Tin tức'
+    category: 'news'
   }
 ];
 
@@ -53,6 +53,14 @@ const categories = [
 ];
 
 export default function Blog() {
+  const [searchParams] = useSearchParams();
+  const categoryQuery = searchParams.get('category');
+
+  // Logic lọc bài viết
+  const filteredPosts = blogPosts.filter(post => 
+    !categoryQuery || post.category === categoryQuery
+  );
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <main className="flex-grow">
@@ -155,7 +163,7 @@ export default function Blog() {
               </div>
 
               <div className="grid grid-cols-1 gap-12">
-                {blogPosts.map((post) => (
+                {filteredPosts.map((post) => (
                   <article key={post.id} className="group border-b border-gray-100 pb-12 last:border-0 font-sans">
                     <div className="flex flex-col md:flex-row gap-8">
                       <div className="md:w-1/3 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100">
@@ -169,7 +177,9 @@ export default function Blog() {
                       </div>
                       <div className="md:w-2/3 flex flex-col justify-center">
                         <div className="flex items-center gap-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">
-                          <span className="bg-black text-white px-2 py-0.5 rounded italic">{post.category}</span>
+                          <span className="bg-black text-white px-2 py-0.5 rounded italic">
+                            {post.category === 'design' ? 'Xu hướng' : post.category === 'tips' ? 'Mẹo vặt' : 'Tin tức'}
+                          </span>
                           <span className="flex items-center gap-1"><Calendar size={12} /> {post.date}</span>
                           <span className="flex items-center gap-1"><User size={12} /> {post.author}</span>
                         </div>

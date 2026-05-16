@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useCartStore } from '@/src/store/cartStore';
 import { useToastStore } from '@/src/store/toastStore';
 import { allProductsDB, getProductById } from '@/src/data/products';
+import ProductCard from '../components/ProductCard';
 
 const formatPrice = (value: number) =>
   new Intl.NumberFormat('vi-VN').format(value) + '₫';
@@ -44,82 +45,28 @@ function AccordionSection({
 }
 
 function RelatedCard({ p }: { p: (typeof allProductsDB)[0] }) {
-  const addToCart = useCartStore((s) => s.addToCart);
-  const showToast = useToastStore((s) => s.showToast);
-  const navigate = useNavigate();
-  const [hovered, setHovered] = useState(false);
-  const pDiscount = p.comparePrice
-    ? Math.round(100 - (p.price / p.comparePrice) * 100)
-    : null;
-
-  const handleAdd = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (p.soldOut) return;
-    addToCart({ id: p.id, name: p.title, price: p.price, image: p.image, quantity: 1 });
-    showToast('Đã thêm vào giỏ hàng');
-  };
-
   return (
-    <Link
-      to={`/products/${p.id}`}
-      className="group block"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div className="relative aspect-square bg-[#f5f3f0] overflow-hidden mb-3">
-        {pDiscount && (
-          <div className="absolute top-2 left-2 z-10 bg-[#9c4533] text-white text-[10px] font-bold px-2 py-0.5">
-            -{pDiscount}%
-          </div>
-        )}
-        {p.soldOut && (
-          <div className="absolute top-2 right-2 z-10 bg-[#888] text-white text-[10px] font-bold px-2 py-1 text-center leading-tight">
-            Hết<br/>hàng
-          </div>
-        )}
-        <img
-          src={hovered && p.hoverImage ? p.hoverImage : p.image}
-          alt={p.title}
-          className="w-full h-full object-contain p-4 transition-all duration-500"
-        />
-        <div className={`absolute bottom-0 left-0 right-0 flex flex-col gap-1 px-2 pb-2 transition-all duration-300 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/products/' + p.id); }}
-            className="w-full py-1.5 bg-[#9c4533] text-white text-[10px] font-semibold uppercase hover:bg-black transition-colors"
-          >
-            Xem sản phẩm
-          </button>
-          <button
-            onClick={handleAdd}
-            disabled={p.soldOut}
-            className={`w-full py-1.5 text-white text-[10px] font-semibold uppercase transition-colors ${p.soldOut ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#191919] hover:bg-[#9c4533]'}`}
-          >
-            {p.soldOut ? 'Hết hàng' : 'Thêm vào giỏ'}
-          </button>
-        </div>
-      </div>
-      <h3 className="text-[12px] md:text-[13px] text-[#333] group-hover:text-[#9c4533] transition-colors line-clamp-2 mb-1.5 min-h-[2.5rem]">
-        {p.title}
-      </h3>
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className={`text-[13px] font-bold ${p.comparePrice ? 'text-[#d60000]' : 'text-[#333]'}`}>
-          {formatPrice(p.price)}
-        </span>
-        {p.comparePrice && (
-          <del className="text-[#aaa] text-[11px]">{formatPrice(p.comparePrice)}</del>
-        )}
-      </div>
-    </Link>
+    <ProductCard
+      product={{
+        id: p.id,
+        title: p.title,
+        price: p.price,
+        comparePrice: p.comparePrice,
+        label: p.comparePrice ? `-${Math.round(100 - (p.price / p.comparePrice) * 100)}%` : undefined,
+        soldOut: p.soldOut,
+        image: p.image,
+      }}
+    />
   );
 }
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const product = getProductById(id ?? '');
+  const normalizedId = id?.toString().trim().toLowerCase() ?? '';
+  const product = getProductById(normalizedId);
 
   const relatedProducts = allProductsDB
-    .filter((p) => p.id !== id)
+    .filter((p) => p.id.toLowerCase() !== normalizedId)
     .slice(0, 5);
 
   const firstAvailableVariant =
@@ -214,9 +161,9 @@ export default function ProductDetail() {
 
           {/* Gallery */}
           <div className="w-full lg:w-[55%] shrink-0">
-            <div className="flex gap-3">
+            <div className="flex flex-col-reverse md:flex-row gap-3">
               {/* Thumbnails dọc desktop */}
-              <div className="hidden md:flex flex-col gap-2 w-[68px] shrink-0">
+              <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto md:w-[80px] shrink-0 pb-2 md:pb-0 scrollbar-hide">
                 {product.images.map((img, idx) => (
                   <button
                     key={idx}
@@ -260,19 +207,6 @@ export default function ProductDetail() {
                 </button>
               </div>
             </div>
-
-            {/* Mobile thumbnails */}
-            <div className="flex md:hidden gap-2 mt-3 overflow-x-auto pb-1">
-              {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => scrollToImage(idx)}
-                  className={`w-14 h-14 shrink-0 border overflow-hidden bg-[#f5f3f0] ${currentImgIndex === idx ? 'border-[#9c4533]' : 'border-[#ddd]'}`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-contain p-1" />
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Product Info */}
@@ -282,13 +216,13 @@ export default function ProductDetail() {
             </h1>
 
             {/* Price */}
-            <div className="flex flex-wrap items-center gap-2 mb-5">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
               {discountPercent && (
-                <span className="text-[11px] font-bold text-[#9c4533] bg-[#fdf0ee] border border-[#f5c9bf] px-2 py-0.5">
+                <span className="text-[11px] font-bold text-[#e60012] bg-[#fdf0ee] border border-[#f5c9bf] px-2.5 py-1 rounded-sm uppercase tracking-wider">
                   -{discountPercent}%
                 </span>
               )}
-              <span className={`text-[24px] md:text-[28px] font-extrabold leading-none ${product.comparePrice ? 'text-[#9c4533]' : 'text-[#222]'}`}>
+              <span className={`text-[26px] md:text-[32px] font-black leading-none ${product.comparePrice ? 'text-[#e60012]' : 'text-[#222]'}`}>
                 {formatPrice(product.price)}
               </span>
               {product.comparePrice && (
@@ -317,15 +251,13 @@ export default function ProductDetail() {
                         disabled={!!v.soldout}
                         onClick={() => !v.soldout && setSelectedVariant(v.value)}
                         title={v.name + (v.soldout ? ' (Hết hàng)' : '')}
-                        className={`relative w-9 h-9 rounded-full border-2 transition-all ${isActive ? 'border-[#9c4533] shadow-[0_0_0_3px_rgba(156,69,51,0.2)]' : 'border-[#ddd] hover:border-[#aaa]'} ${v.soldout ? 'cursor-not-allowed opacity-40' : ''}`}
+                        className={`relative w-10 h-10 rounded-full border-2 transition-all p-0.5 ${isActive ? 'border-[#333] scale-110 shadow-sm' : 'border-transparent hover:border-gray-300'} ${v.soldout ? 'cursor-not-allowed opacity-40' : ''}`}
                         style={{ backgroundColor: v.color }}
                       >
                         {v.soldout && (
                           <span className="absolute left-1/2 top-1/2 h-[1.5px] w-[140%] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-gray-500/70 rounded" />
                         )}
-                        {isActive && !v.soldout && (
-                          <span className="absolute inset-0 rounded-full ring-[2px] ring-white ring-inset" />
-                        )}
+                        <span className={cn("block w-full h-full rounded-full border border-black/5", isActive && "ring-2 ring-white ring-inset")} style={{ backgroundColor: v.color }} />
                       </button>
                     );
                   })}
@@ -334,9 +266,9 @@ export default function ProductDetail() {
             )}
 
             {/* Quantity */}
-            <div className="mb-5">
-              <div className="text-[12px] text-[#888] mb-2.5">Số lượng</div>
-              <div className="inline-flex border border-[#ddd] h-11">
+            <div className="mb-8">
+              <div className="text-[12px] font-bold uppercase tracking-widest text-[#888] mb-3">Số lượng</div>
+              <div className="inline-flex border border-[#ddd] h-12 rounded-sm bg-gray-50/50">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -365,19 +297,19 @@ export default function ProductDetail() {
                 type="button"
                 disabled={isSoldOut}
                 onClick={handleAddToCart}
-                className={`w-full py-3.5 font-bold uppercase tracking-[0.15em] text-[13px] inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] mb-2.5 ${isSoldOut ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : isAdded ? 'bg-green-600 text-white' : 'bg-[#9c4533] text-white hover:bg-[#7d3628]'}`}
+                className={`w-full py-4 font-bold uppercase tracking-[0.2em] text-[14px] inline-flex items-center justify-center gap-3 transition-all active:scale-[0.98] mb-3 rounded-sm ${isSoldOut ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : isAdded ? 'bg-black text-white' : 'bg-[#1a1a1a] text-white hover:bg-black shadow-lg shadow-black/10'}`}
               >
                 {isAdded ? (
                   <><Check size={15} strokeWidth={3} /> Đã thêm vào giỏ</>
                 ) : (
-                  <><ShoppingCart size={15} /> {isSoldOut ? 'Hết hàng' : 'Thêm vào giỏ hàng'}</>
+                  <>{isSoldOut ? 'Hết hàng' : 'Thêm vào giỏ hàng'}</>
                 )}
               </button>
               <button
                 type="button"
                 disabled={isSoldOut}
                 onClick={handleBuyNow}
-                className={`w-full py-3 font-semibold uppercase tracking-[0.12em] text-[12px] border transition-all active:scale-[0.98] ${isSoldOut ? 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50' : 'border-[#333] text-[#333] hover:bg-[#333] hover:text-white'}`}
+                className={`w-full py-3.5 font-bold uppercase tracking-[0.15em] text-[12px] border-2 rounded-sm transition-all active:scale-[0.98] ${isSoldOut ? 'border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50' : 'border-[#1a1a1a] text-[#1a1a1a] hover:bg-gray-50'}`}
               >
                 Mua ngay
               </button>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Info } from 'lucide-react';
 import { useCartStore } from '@/src/store/cartStore';
 import { useToastStore } from '@/src/store/toastStore';
+import ProductCard from '../components/ProductCard';
 
 /**
  * @description Trang Landing Page - Phần Banner và Countdown
@@ -167,140 +168,32 @@ const HOT_TABS = [
   { id: 'ban', label: 'Bàn xếp' },
 ] as const;
 
-function LandingProductCard({
-  item,
-  variant,
-}: {
-  item: ProductRowItem;
-  variant: 'promo' | 'hot';
-}) {
-  const addToCart = useCartStore((state) => state.addToCart);
-  const showToast = useToastStore((state) => state.showToast);
-  const navigate = useNavigate();
+const SLUG_MAP: Record<number, string> = {
+  1: 'am-tra-inox-khong-ghi',
+  2: 'ban-xep-gon-nhe-tb01',
+  3: 'den-de-ban-gon-nhe-petite',
+  4: 'den-treo-sang-trong-hubert',
+  5: 'ghe-go-bap-benh-iconic',
+  6: 'ghe-phong-khach-arctander',
+  7: 'ghe-sofa-giuong-keo-roots',
+  8: 'sofa-2-cho-ngoi',
+  9: 'ghe-thu-gian-cao-cap',
+  10: 'tu-sach-go-tu-nhien',
+};
 
-  // Map số thứ tự LandingPage → slug thực trong products DB
-  const SLUG_MAP: Record<number, string> = {
-    1: 'am-tra-inox-khong-ghi',
-    2: 'ban-xep-gon-nhe-tb01',
-    3: 'den-de-ban-gon-nhe-petite',
-    4: 'den-treo-sang-trong-hubert',
-    5: 'ghe-go-bap-benh-iconic',
-    6: 'ghe-phong-khach-arctander',
-    7: 'ghe-sofa-giuong-keo-roots',
-    8: 'sofa-2-cho-ngoi',
-    9: 'ghe-thu-gian-cao-cap',
-    10: 'tu-sach-go-tu-nhien',
-  };
+function LandingProductCard({ item, variant }: { item: ProductRowItem; variant: 'promo' | 'hot' }) {
   const productSlug = SLUG_MAP[item.id] ?? `san-pham-${item.id}`;
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (item.soldOut) return;
-    addToCart({
-      id: String(item.id),
-      name: item.name,
-      price: parseInt(item.price.replace(/[^\d]/g, ''), 10),
-      image: cdnImg(item.img),
-      quantity: 1,
-    });
-    showToast('Đã thêm vào giỏ hàng');
+  // Map số thứ tự LandingPage → slug thực trong products DB
+  const product = {
+    id: productSlug,
+    title: item.name,
+    price: parseInt(item.price.replace(/[^\d]/g, ''), 10),
+    comparePrice: item.oldPrice ? parseInt(item.oldPrice.replace(/[^\d]/g, ''), 10) : undefined,
+    label: item.sale || undefined,
+    soldOut: item.soldOut,
+    image: cdnImg(item.img),
   };
-
-  const handleViewProduct = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate(`/products/${productSlug}`);
-  };
-
-  return (
-    <article className="group flex flex-col overflow-hidden rounded-[3px] border border-[#e5e0e0] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-      <div className="relative bg-[#f0f0f0]">
-        <div className="relative aspect-[4/5] w-full flex items-center justify-center p-2 sm:p-3">
-          {!item.soldOut && item.sale ? (
-            <div className="absolute top-2 left-2 z-10 min-w-[42px] rounded-t-sm rounded-b-lg bg-[#e60012] px-1.5 py-1.5 text-center text-[9px] font-bold leading-tight text-white shadow-sm sm:text-[10px]">
-              <span className="block">Giảm</span>
-              <span className="block font-black">{item.sale.replace(/\s/g, '')}</span>
-            </div>
-          ) : null}
-          {item.soldOut ? (
-            <div className="absolute top-2 right-2 z-20 min-w-[42px] rounded-t-sm rounded-b-lg bg-[#9a9a9a] px-1.5 py-1.5 text-center text-[9px] font-bold uppercase leading-tight text-white shadow-sm sm:text-[10px]">
-              <span className="block tracking-wide">Bán</span>
-              <span className="block tracking-wide">hết</span>
-            </div>
-          ) : null}
-
-          <img
-            src={cdnImg(item.img)}
-            alt={item.name}
-            className="relative z-0 max-h-[86%] max-w-full w-auto h-auto object-contain select-none"
-            loading="lazy"
-            decoding="async"
-          />
-
-          {/* Nút hover */}
-          <div className="absolute bottom-[-10%] left-0 w-full px-2 group-hover:bottom-[6%] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-500 z-20 flex flex-col gap-1.5">
-            <button
-              onClick={handleViewProduct}
-              className="w-full py-1.5 uppercase font-medium text-[10px] sm:text-[11px] flex items-center justify-center bg-[#9c4533] text-white hover:bg-black transition-colors"
-            >
-              Xem sản phẩm
-            </button>
-            <button
-              onClick={handleAddToCart}
-              disabled={item.soldOut}
-              className={`w-full py-1.5 uppercase font-medium text-[10px] sm:text-[11px] flex items-center justify-center transition-colors ${
-                item.soldOut
-                  ? 'cursor-not-allowed bg-gray-300 text-gray-500'
-                  : 'bg-[#191919] text-white hover:bg-[#9c4533]'
-              }`}
-            >
-              {item.soldOut ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
-            </button>
-          </div>
-        </div>
-
-        {variant === 'hot' ? (
-          <div className="flex min-h-[36px] w-full items-center justify-between border-t border-white/10 bg-black px-2.5 py-2 sm:min-h-[38px] sm:px-3">
-            <span className="text-[10px] font-black italic tracking-tight text-white sm:text-[11px]">
-              SALE <span className="not-italic font-black">50%</span>
-            </span>
-            <span className="whitespace-nowrap text-[8px] font-medium text-white/90 sm:text-[9px]">
-              20/12 - 31/12
-            </span>
-          </div>
-        ) : (
-          <div className="flex min-h-[38px] w-full items-stretch border-t border-black/5">
-            <div className="flex min-w-0 flex-1 items-center bg-gradient-to-r from-[#252525] via-[#3a2222] to-[#5c1212] px-2 py-1.5 sm:px-2.5">
-              <span className="text-[10px] font-black italic leading-none tracking-tight text-white sm:text-[11px]">
-                SALE{' '}
-                <span className="not-italic font-black text-[#ff3b30]">50%++</span>
-              </span>
-            </div>
-            <div className="flex shrink-0 items-center bg-[#9a0f0f] px-2 sm:px-2.5">
-              <span className="whitespace-nowrap text-[8px] font-semibold leading-tight text-white sm:text-[9px]">
-                20/12 - 31/12
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col bg-white px-2.5 pb-2.5 pt-2 sm:px-3 sm:pb-3 sm:pt-2.5">
-        <h3 className="mb-2 min-h-[2.5rem] text-left text-[11px] font-normal leading-snug text-[#1a1a1a] line-clamp-2 transition-colors group-hover:text-[#c40000] sm:text-[12px] md:text-[13px]">
-          <Link to={`/products/${productSlug}`} className="hover:text-[#c40000]">{item.name}</Link>
-        </h3>
-        <div className="mt-auto flex flex-wrap items-baseline justify-start gap-x-2 gap-y-0.5 text-left">
-          <span className="text-[12px] font-bold text-[#d60000] sm:text-[13px] md:text-[14px]">{item.price}</span>
-          {item.oldPrice ? (
-            <span className="text-[10px] text-[#a8a8a8] line-through decoration-[#bfbfbf] sm:text-[11px]">
-              {item.oldPrice}
-            </span>
-          ) : null}
-        </div>
-      </div>
-    </article>
-  );
+  return <ProductCard product={product} variant={variant} />;
 }
 
 export default function LandingPage() {

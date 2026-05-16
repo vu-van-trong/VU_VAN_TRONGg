@@ -163,11 +163,11 @@ export const allProductsDB: ProductFull[] = [
     price: 4500000,
     comparePrice: 5200000,
     label: '-13%',
-    image: 'https://product.hstatic.net/1000309459/product/sp2-1_ee610e766bb440738090133fd553280f_ff6e0900534d42ca805e7aa9f7e5578d_grande.jpg',
-    hoverImage: 'https://product.hstatic.net/1000309459/product/sp2-2_11b93fc9ba874d238bbaa87d233f0582_ac29fd9a659b4aa78682dd0372d4021e_grande.jpg',
+    image: 'https://product.hstatic.net/1000309459/product/sp9-1_a13a66828d904b0388e03b4b12fdbea0_b699f1d6595244148610a17d3a3393f9_grande.jpg',
+    hoverImage: 'https://product.hstatic.net/1000309459/product/sp9-2_5cbcdc59238643d4a639ccc4278a6492_5d000b4a82804cb1a20360b63ff50829_grande.jpg',
     images: [
-      'https://product.hstatic.net/1000309459/product/sp2-1_ee610e766bb440738090133fd553280f_ff6e0900534d42ca805e7aa9f7e5578d_master.jpg',
-      'https://product.hstatic.net/1000309459/product/sp2-2_11b93fc9ba874d238bbaa87d233f0582_ac29fd9a659b4aa78682dd0372d4021e_master.jpg',
+      'https://product.hstatic.net/1000309459/product/sp9-1_a13a66828d904b0388e03b4b12fdbea0_b699f1d6595244148610a17d3a3393f9_master.jpg',
+      'https://product.hstatic.net/1000309459/product/sp9-2_5cbcdc59238643d4a639ccc4278a6492_5d000b4a82804cb1a20360b63ff50829_master.jpg',
     ],
     category: 'Tất cả sản phẩm',
     categoryPath: '/collections/all',
@@ -215,11 +215,74 @@ export const allProductsDB: ProductFull[] = [
     ],
     description: '<p>Tủ sách gỗ tự nhiên 5 tầng, thiết kế mở thoáng đãng. Gỗ thông nguyên tấm được xử lý chống ẩm, có thể tháo lắp linh hoạt.</p>',
   },
+  {
+    id: 'loa-bluetooth-bo-beoplay',
+    title: 'Loa Bluetooth B&O Beoplay',
+    price: 4550000,
+    image: 'https://product.hstatic.net/1000309459/product/sp2-1_ee610e766bb440738090133fd553280f_ff6e0900534d42ca805e7aa9f7e5578d_grande.jpg',
+    hoverImage: 'https://product.hstatic.net/1000309459/product/sp2-2_11b93fc9ba874d238bbaa87d233f0582_ac29fd9a659b4aa78682dd0372d4021e_grande.jpg',
+    images: [
+      'https://product.hstatic.net/1000309459/product/sp2-1_ee610e766bb440738090133fd553280f_ff6e0900534d42ca805e7aa9f7e5578d_master.jpg',
+      'https://product.hstatic.net/1000309459/product/sp2-2_11b93fc9ba874d238bbaa87d233f0582_ac29fd9a659b4aa78682dd0372d4021e_master.jpg',
+    ],
+    category: 'Đồ điện tử',
+    categoryPath: '/collections/all',
+    variants: [{ name: 'Trắng', value: 'Trắng', color: '#ffffff' }],
+    description: '<p>Âm thanh trung thực, thiết kế tinh tế.</p>',
+  },
+  {
+    id: 'ghe-tua-lung-phong-khach-s004',
+    title: 'Ghế tựa lưng phòng khách S004',
+    price: 2400000,
+    comparePrice: 3200000,
+    label: '-25%',
+    image: 'https://product.hstatic.net/1000309459/product/sp10-1_bee2a9c0558d4324bf174ec4dca83071_d2c27994d7be4d71b388b3c9f95826c2_grande.jpg',
+    hoverImage: 'https://product.hstatic.net/1000309459/product/sp10-2_a745f85b63f5497793be87949deb1a7b_c4db0b6210d84546a55ae4a4faeaa8bf_grande.jpg',
+    images: [
+      'https://product.hstatic.net/1000309459/product/sp10-1_bee2a9c0558d4324bf174ec4dca83071_d2c27994d7be4d71b388b3c9f95826c2_master.jpg',
+    ],
+    category: 'Nội thất phòng khách',
+    categoryPath: '/collections/all',
+    variants: [{ name: 'Xám', value: 'Xám', color: '#d2dae2' }],
+    description: '<p>Ghế tựa lưng phong cách hiện đại.</p>',
+  },
+  {
+    id: 'sofa-giuong-pvc-xuat-khau-so-226',
+    title: 'Sofa giường PVC xuất khẩu SO-226',
+    price: 4130000,
+    comparePrice: 4359000,
+    label: '-5%',
+    image: 'https://product.hstatic.net/1000309459/product/pro17_a40384c66baa4040b9fecd033f111dec_grande.jpg',
+    hoverImage: 'https://product.hstatic.net/1000309459/product/pro17_a40384c66baa4040b9fecd033f111dec_grande.jpg',
+    images: [
+      'https://product.hstatic.net/1000309459/product/pro17_a40384c66baa4040b9fecd033f111dec_master.jpg',
+    ],
+    category: 'Sofa',
+    categoryPath: '/collections/all',
+    variants: [{ name: 'Đen', value: 'Đen', color: '#000000' }],
+    description: '<p>Sofa giường thông minh cho căn hộ nhỏ.</p>',
+  },
+  {
+    id: 'ghe-van-phong-chan-xoay',
+    title: 'Ghế Văn Phòng Chân Xoay',
+    price: 969000,
+    image: 'https://product.hstatic.net/1000309459/product/pro6_c3480a33e39042e599b90dfd098160df_grande.jpg',
+    hoverImage: 'https://product.hstatic.net/1000309459/product/pro6_c3480a33e39042e599b90dfd098160df_grande.jpg',
+    images: [
+      'https://product.hstatic.net/1000309459/product/pro6_c3480a33e39042e599b90dfd098160df_master.jpg',
+    ],
+    category: 'Nội thất văn phòng',
+    categoryPath: '/collections/all',
+    variants: [{ name: 'Đen', value: 'Đen', color: '#000000' }],
+    description: '<p>Hỗ trợ tư thế ngồi làm việc chuẩn.</p>',
+  },
 ];
 
 // Hàm tiện ích: tìm sản phẩm theo id
 export function getProductById(id: string): ProductFull | undefined {
-  return allProductsDB.find((p) => p.id === id);
+  if (!id) return undefined;
+  const targetId = id.toString().trim().toLowerCase();
+  return allProductsDB.find((p) => p.id.toLowerCase() === targetId);
 }
 
 // ============================================================

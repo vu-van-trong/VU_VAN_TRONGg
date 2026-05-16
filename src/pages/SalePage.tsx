@@ -922,7 +922,7 @@ export default function SalePage() {
         </div>
 
         {/* ══ TRẠM 1: SPINNER ══════════════════════════ */}
-        <div className="mf-deal-station" style={{ paddingTop: 48 }}>
+        <div id="tram-1" className="mf-deal-station" style={{ paddingTop: 48 }}>
           <div className="mf-deal-station-num">1</div>
           <div className="mf-deal-station-label">Trạm 1</div>
           <div className="mf-deal-station-line" />
@@ -940,7 +940,7 @@ export default function SalePage() {
         </div>
 
         {/* ══ TRẠM 2: COMBO ════════════════════════════ */}
-        <div className="mf-deal-station">
+        <div id="tram-2" className="mf-deal-station">
           <div className="mf-deal-station-num">2</div>
           <div className="mf-deal-station-label">Trạm 2</div>
           <div className="mf-deal-station-line" />
@@ -960,7 +960,7 @@ export default function SalePage() {
         </div>
 
         {/* ══ TRẠM 3: HOT SALE ═════════════════════════ */}
-        <div className="mf-deal-station">
+        <div id="tram-3" className="mf-deal-station">
           <div className="mf-deal-station-num">3</div>
           <div className="mf-deal-station-label">Trạm 3</div>
           <div className="mf-deal-station-line" />
